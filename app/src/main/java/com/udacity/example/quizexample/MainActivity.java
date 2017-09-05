@@ -95,17 +95,22 @@ public class MainActivity extends AppCompatActivity {
     public void nextWord() {
 
         // Change button text
-        mButton.setText(getString(R.string.show_definition));
+        mButton.setText(getString(R.string.next_word));
+
 
         // TODO (3) Go to the next word in the Cursor, show the next word and hide the definition
         // Note that you shouldn't try to do this if the cursor hasn't been set yet.
         try {
-            if(mData != null) {
+            if(mData != null && mData.moveToNext()) {
+                getnewWord();
                 mWordTextView.setText(word);
-                if(mData.isLast()){
-                    mData.moveToFirst();
-                }
+                mWordDefTextView.setVisibility(View.INVISIBLE);
 
+
+
+            }
+            else if(!mData.moveToNext()){
+                mData.moveToFirst();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
         // If you reach the end of the list of words, you should start at the beginning again.
+
         mCurrentState = STATE_HIDDEN;
 
 
@@ -123,12 +130,16 @@ public class MainActivity extends AppCompatActivity {
     public void showDefinition() {
 
         // Change button text
-        mButton.setText(getString(R.string.next_word));
+        mButton.setText(getString(R.string.show_definition));
 
         // TODO (4) Show the definition
         mWordDefTextView.setText(definition);
+        mWordDefTextView.setVisibility(View.VISIBLE);
+
+
 
         mCurrentState = STATE_SHOWN;
+
 
     }
 
@@ -167,20 +178,31 @@ public class MainActivity extends AppCompatActivity {
 
             // TODO (2) Initialize anything that you need the cursor for, such as setting up
             // the screen with the first word and setting any other instance variables
-            int wordCol = mData.getColumnIndex(DroidTermsExampleContract.COLUMN_WORD);
-            int defCol = mData.getColumnIndex(DroidTermsExampleContract.COLUMN_DEFINITION);
 
-            while(mData.moveToNext()){
-                word = mData.getString(wordCol);
-                Log.v("Word test is", word );
-                definition = mData.getString(defCol);
-                Log.v("Cursor Example", word + "-" + definition);
+
+
+
+
+
+            getnewWord();
                 //mWordTextView.setText(word);
 
-            }
+
 
 
          }
+
+    }
+
+    public void getnewWord(){
+        int wordCol = mData.getColumnIndex(DroidTermsExampleContract.COLUMN_WORD);
+        int defCol = mData.getColumnIndex(DroidTermsExampleContract.COLUMN_DEFINITION);
+
+        mData.moveToNext();
+        word = mData.getString(wordCol);
+        Log.v("Word test is", word );
+        definition = mData.getString(defCol);
+        Log.v("Cursor Example", word + "-" + definition);
 
     }
 
